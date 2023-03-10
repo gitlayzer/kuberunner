@@ -1,0 +1,5 @@
+ListenAddress: ":80"
+KubeConfigs:
+  cluster1: "C:\\Users\\Administrator\\.kube\\config"
+  cluster2: "C:\\Users\\Administrator\\.kube\\config"
+  cluster3: "C:\\Users\\Administrator\\.kube\\config"
