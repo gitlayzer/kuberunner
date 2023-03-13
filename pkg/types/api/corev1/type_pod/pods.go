@@ -87,8 +87,7 @@ func (p *pod) UpdatePod(client *kubernetes.Clientset, namespace, content string)
 }
 
 func (p *pod) DeletePod(client *kubernetes.Clientset, podName, namespace string) (err error) {
-	err = client.CoreV1().Pods(namespace).Delete(context.Background(), podName, metav1.DeleteOptions{})
-	if err != nil {
+	if err = client.CoreV1().Pods(namespace).Delete(context.Background(), podName, metav1.DeleteOptions{}); err != nil {
 		return errors.New(fmt.Sprintf("删除Pod失败: %v", err))
 	}
 

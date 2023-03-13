@@ -2,16 +2,18 @@ package v1
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/gitlayzer/kuberunner/pkg/types/api/corev1/type_deployment"
+	"github.com/gitlayzer/kuberunner/pkg/types/api/corev1/type_statefulset"
 	"github.com/gitlayzer/kuberunner/pkg/utils"
 	"net/http"
 )
 
-var Deployment deployment
+var (
+	StatefulSet statefulset
+)
 
-type deployment struct{}
+type statefulset struct{}
 
-func (d *deployment) GetDeployments(ctx *gin.Context) {
+func (d *statefulset) GetStatefulSets(ctx *gin.Context) {
 	params := new(struct {
 		FilterName string `form:"filter_name" json:"filter_name"`
 		Namespace  string `form:"namespace" json:"namespace"`
@@ -37,7 +39,7 @@ func (d *deployment) GetDeployments(ctx *gin.Context) {
 		return
 	}
 
-	deploymentResp, err := type_deployment.Deployment.GetDeployments(client, params.FilterName, params.Namespace, params.Limit, params.Page)
+	statefulSetResp, err := type_statefulset.StatefulSet.GetStatefulSets(client, params.FilterName, params.Namespace, params.Limit, params.Page)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"message": err.Error(),
@@ -48,15 +50,15 @@ func (d *deployment) GetDeployments(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, gin.H{
 		"message": "success",
-		"data":    deploymentResp,
+		"data":    statefulSetResp,
 	})
 }
 
-func (d *deployment) GetDeploymentDetail(ctx *gin.Context) {
+func (d *statefulset) GetStatefulSetDetail(ctx *gin.Context) {
 	params := new(struct {
-		DeploymentName string `form:"deployment_name" json:"deployment_name"`
-		Namespace      string `form:"namespace" json:"namespace"`
-		Cluster        string `form:"cluster" json:"cluster"`
+		StatefulSetName string `form:"statefulset_name" json:"statefulset_name"`
+		Namespace       string `form:"namespace" json:"namespace"`
+		Cluster         string `form:"cluster" json:"cluster"`
 	})
 
 	if err := ctx.Bind(params); err != nil {
@@ -76,7 +78,7 @@ func (d *deployment) GetDeploymentDetail(ctx *gin.Context) {
 		return
 	}
 
-	deploymentResp, err := type_deployment.Deployment.GetDeploymentDetail(client, params.DeploymentName, params.Namespace)
+	statefulSetDetail, err := type_statefulset.StatefulSet.GetStatefulSetDetail(client, params.StatefulSetName, params.Namespace)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"message": err.Error(),
@@ -87,11 +89,11 @@ func (d *deployment) GetDeploymentDetail(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, gin.H{
 		"message": "success",
-		"data":    deploymentResp,
+		"data":    statefulSetDetail,
 	})
 }
 
-func (d *deployment) UpdateDeployment(ctx *gin.Context) {
+func (d *statefulset) UpdateStatefulSet(ctx *gin.Context) {
 	params := new(struct {
 		Namespace string `json:"namespace"`
 		Content   string `json:"content"`
@@ -115,7 +117,7 @@ func (d *deployment) UpdateDeployment(ctx *gin.Context) {
 		return
 	}
 
-	if err := type_deployment.Deployment.UpdateDeployment(client, params.Namespace, params.Content); err != nil {
+	if err := type_statefulset.StatefulSet.UpdateStatefulSet(client, params.Namespace, params.Content); err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"message": err.Error(),
 			"data":    nil,
@@ -129,12 +131,12 @@ func (d *deployment) UpdateDeployment(ctx *gin.Context) {
 	})
 }
 
-func (d *deployment) UpdateDeploymentReplicas(ctx *gin.Context) {
+func (d *statefulset) UpdateStatefulSetReplicas(ctx *gin.Context) {
 	params := new(struct {
-		DeploymentName string `json:"deployment_name"`
-		Namespace      string `json:"namespace"`
-		Cluster        string `json:"cluster"`
-		Replicas       int32  `json:"replicas"`
+		StatefulSetName string `json:"statefulset_name"`
+		Namespace       string `json:"namespace"`
+		Cluster         string `json:"cluster"`
+		Replicas        int32  `json:"replicas"`
 	})
 
 	if err := ctx.ShouldBind(params); err != nil {
@@ -154,7 +156,7 @@ func (d *deployment) UpdateDeploymentReplicas(ctx *gin.Context) {
 		return
 	}
 
-	replicas, err := type_deployment.Deployment.UpdateDeploymentReplicas(client, params.DeploymentName, params.Namespace, params.Replicas)
+	replicas, err := type_statefulset.StatefulSet.UpdateStatefulSetReplicas(client, params.StatefulSetName, params.Namespace, params.Replicas)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"message": err.Error(),
@@ -169,11 +171,11 @@ func (d *deployment) UpdateDeploymentReplicas(ctx *gin.Context) {
 	})
 }
 
-func (d *deployment) RestartDeployment(ctx *gin.Context) {
+func (d *statefulset) RestartStatefulSet(ctx *gin.Context) {
 	params := new(struct {
-		DeploymentName string `json:"deployment_name"`
-		Namespace      string `json:"namespace"`
-		Cluster        string `json:"cluster"`
+		StatefulSetName string `json:"statefulset_name"`
+		Namespace       string `json:"namespace"`
+		Cluster         string `json:"cluster"`
 	})
 
 	if err := ctx.ShouldBindJSON(params); err != nil {
@@ -193,7 +195,7 @@ func (d *deployment) RestartDeployment(ctx *gin.Context) {
 		return
 	}
 
-	if err := type_deployment.Deployment.RestartDeployment(client, params.DeploymentName, params.Namespace); err != nil {
+	if err := type_statefulset.StatefulSet.RestartStatefulSet(client, params.StatefulSetName, params.Namespace); err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"message": err.Error(),
 			"data":    nil,
@@ -207,13 +209,13 @@ func (d *deployment) RestartDeployment(ctx *gin.Context) {
 	})
 }
 
-func (d *deployment) CreateDeployment(ctx *gin.Context) {
+func (d *statefulset) CreateStatefulSet(ctx *gin.Context) {
 	var (
-		deployCreate = new(type_deployment.DeploymentCreate)
-		err          error
+		statefulSetCreate = new(type_statefulset.StatefulSetCreate)
+		err               error
 	)
 
-	if err := ctx.ShouldBindJSON(deployCreate); err != nil {
+	if err := ctx.ShouldBindJSON(statefulSetCreate); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"message": err.Error(),
 			"data":    nil,
@@ -221,7 +223,7 @@ func (d *deployment) CreateDeployment(ctx *gin.Context) {
 		return
 	}
 
-	client, err := utils.K8s.GetClient(deployCreate.Cluster)
+	client, err := utils.K8s.GetClient(statefulSetCreate.Cluster)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"message": err.Error(),
@@ -230,7 +232,7 @@ func (d *deployment) CreateDeployment(ctx *gin.Context) {
 		return
 	}
 
-	if err := type_deployment.Deployment.CreateDeployment(client, deployCreate); err != nil {
+	if err := type_statefulset.StatefulSet.CreateStatefulSet(client, statefulSetCreate); err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"message": err.Error(),
 			"data":    nil,
@@ -244,11 +246,11 @@ func (d *deployment) CreateDeployment(ctx *gin.Context) {
 	})
 }
 
-func (d *deployment) DeleteDeployment(ctx *gin.Context) {
+func (d *statefulset) DeleteStatefulSet(ctx *gin.Context) {
 	params := new(struct {
-		DeploymentName string `json:"deployment_name"`
-		Namespace      string `json:"namespace"`
-		Cluster        string `json:"cluster"`
+		StatefulSetName string `json:"statefulset_name"`
+		Namespace       string `json:"namespace"`
+		Cluster         string `json:"cluster"`
 	})
 
 	if err := ctx.ShouldBind(params); err != nil {
@@ -268,7 +270,7 @@ func (d *deployment) DeleteDeployment(ctx *gin.Context) {
 		return
 	}
 
-	if err := type_deployment.Deployment.DeleteDeployment(client, params.DeploymentName, params.Namespace); err != nil {
+	if err := type_statefulset.StatefulSet.DeleteStatefulSet(client, params.StatefulSetName, params.Namespace); err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"message": err.Error(),
 			"data":    nil,

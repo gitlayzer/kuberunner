@@ -206,9 +206,7 @@ func (d *deployment) CreateDeployment(client *kubernetes.Clientset, data *Deploy
 }
 
 func (d *deployment) DeleteDeployment(client *kubernetes.Clientset, deploymentName, namespace string) (err error) {
-	err = client.AppsV1().Deployments(namespace).Delete(context.TODO(), deploymentName, metav1.DeleteOptions{})
-
-	if err != nil {
+	if err = client.AppsV1().Deployments(namespace).Delete(context.TODO(), deploymentName, metav1.DeleteOptions{}); err != nil {
 		return errors.New(fmt.Sprintf("删除Deployment失败: %v", err))
 	}
 
