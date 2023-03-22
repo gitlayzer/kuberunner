@@ -20,10 +20,8 @@
 
 ```shell
 本次更新已实现部分资源的所有操作功能，包括部分资源的增删改查，Pod资源的日志/终端功能已经实现，目前可以直接打包运行使用，只需要在config.yaml内配置需要的参数
-
-config.yaml解释如下：
 ```
-
+### 4：config.yaml解释如下
 ```yaml
 # API监听的端口
 ListenAddress: ":80"
