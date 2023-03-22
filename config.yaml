@@ -1,0 +1,6 @@
+ListenAddress: ":80"
+WsListenAddress: ":81"
+Username: "admin"
+Password: "admin"
+KubeConfigs:
+  cluster1: "C:\\Users\\Administrator\\.kube\\config"
