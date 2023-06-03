@@ -1,27 +1,15 @@
-# Kuberunner
+![kuberunner](https://github.com/gitlayzer/kuberunner-dashboard/assets/77761224/d94d0f6d-aa64-4179-956b-2dcd5544b9c1)
 
-<!-- TOC -->
-* [1：此项目只用于重构Kubemanager](https://github.com/gitlayzer/kubemanager)
-* [2：发布详情](#4发布详情)
-* [3：更新日志](#5更新日志)
-<!-- TOC -->
-
-
-### 2：发布详情
-
-
-|    名称    |  版本  |  发布时间  |  发布人   | 是否更新UI |
-| :--------: | :----: | :--------: | :-------: | :--------: |
-| kuberunner | v0.0.1 | 2023/03/10 | Gitlayzer |     ×      |
-| kuberunner | v0.0.2 | 2023/03/13 | Gitlayzer |     ×      |
-| kuberunner | v0.0.3 | 2023/03/13 | Gitlayzer |     √      |
-
-### 3：更新日志
+|    名称    |   版本   |    发布时间    |  发布人   | 是否更新UI |
+| :--------: |:------:|:----------:| :-------: |:------:|
+| kuberunner | v0.0.1 | 2023/03/10 | Gitlayzer |   ×    |
+| kuberunner | v0.0.2 | 2023/03/13 | Gitlayzer |   ×    |
+| kuberunner | v0.0.3 | 2023/03/13 | Gitlayzer |   √    |
+| kuberunner | v0.0.4 | 2023/06/03 | Gitlayzer |   √    |
 
 ```shell
-本次更新已实现部分资源的所有操作功能，包括部分资源的增删改查，Pod资源的日志/终端功能已经实现，目前可以直接打包运行使用，只需要在config.yaml内配置需要的参数
+本次更新主要针对的路由注册方法，重构了路由注册的思路，通过模块化的形式进行路由注册，可具体到某个资源的所有操作
 ```
-### 4：config.yaml解释如下
 ```yaml
 # API监听的端口
 ListenAddress: ":80"

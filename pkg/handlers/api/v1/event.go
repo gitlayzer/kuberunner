@@ -11,6 +11,13 @@ var Event event
 
 type event struct{}
 
+func (e *event) Register(router *gin.Engine) {
+	event := router.Group("/api/v1/k8s/event")
+	{
+		event.GET("/list", e.GetEventList)
+	}
+}
+
 func (e *event) GetEventList(ctx *gin.Context) {
 	params := new(struct {
 		FilterName string `form:"filter_name" json:"filter_name"`

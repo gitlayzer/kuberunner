@@ -11,6 +11,13 @@ var ResourceNum resourcenum
 
 type resourcenum struct{}
 
+func (r *resourcenum) Register(router *gin.Engine) {
+	resource := router.Group("/api/v1/k8s")
+	{
+		resource.GET("/resources", r.GetResources)
+	}
+}
+
 func (r *resourcenum) GetResources(ctx *gin.Context) {
 	params := new(struct {
 		Cluster string `json:"cluster" form:"cluster"`

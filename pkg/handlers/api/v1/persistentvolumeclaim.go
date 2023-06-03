@@ -11,6 +11,17 @@ var PersistentVolumeClaim persistentvolumeclaim
 
 type persistentvolumeclaim struct{}
 
+func (p *persistentvolumeclaim) Register(router *gin.Engine) {
+	persistentvolumeclaim := router.Group("/api/v1/k8s/persistentvolumeclaim")
+	{
+		persistentvolumeclaim.GET("/list", p.GetPersistentVolumeClaims)
+		persistentvolumeclaim.GET("/detail", p.GetPersistentVolumeClaimDetail)
+		persistentvolumeclaim.POST("/create", p.CreatePersistentVolumeClaim)
+		persistentvolumeclaim.DELETE("/delete", p.DeletePersistentVolumeClaim)
+		persistentvolumeclaim.PUT("/update", p.UpdatePersistentVolumeClaim)
+	}
+}
+
 func (p *persistentvolumeclaim) GetPersistentVolumeClaims(ctx *gin.Context) {
 	params := new(struct {
 		FilterName string `form:"filter_name" json:"filter_name"`

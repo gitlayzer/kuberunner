@@ -11,6 +11,17 @@ var Secret secret
 
 type secret struct{}
 
+func (s *secret) Register(router *gin.Engine) {
+	secret := router.Group("/api/v1/k8s/secret")
+	{
+		secret.GET("/list", s.GetSecrets)
+		secret.GET("/detail", s.GetSecretDetail)
+		secret.POST("/create", s.CreateSecret)
+		secret.PUT("/update", s.UpdateSecret)
+		secret.DELETE("/delete", s.DeleteSecret)
+	}
+}
+
 func (s *secret) GetSecrets(ctx *gin.Context) {
 	params := new(struct {
 		FilterName string `form:"filter_name" json:"filter_name"`

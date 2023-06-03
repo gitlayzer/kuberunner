@@ -11,6 +11,15 @@ var Namespace namespace
 
 type namespace struct{}
 
+func (n *namespace) Register(router *gin.Engine) {
+	namespace := router.Group("/api/v1/k8s/namespace")
+	{
+		namespace.GET("/list", n.GetNamespaces)
+		namespace.POST("/create", n.CreateNamespace)
+		namespace.DELETE("/delete", n.DeleteNamespace)
+	}
+}
+
 func (n *namespace) GetNamespaces(ctx *gin.Context) {
 	params := new(struct {
 		FilterName string `form:"filter_name" json:"filter_name"`

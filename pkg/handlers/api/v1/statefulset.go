@@ -13,7 +13,20 @@ var (
 
 type statefulset struct{}
 
-func (d *statefulset) GetStatefulSets(ctx *gin.Context) {
+func (s *statefulset) Register(router *gin.Engine) {
+	statefulset := router.Group("/api/v1/k8s/statefulset")
+	{
+		statefulset.GET("/list", s.GetStatefulSets)
+		statefulset.GET("/detail", s.GetStatefulSetDetail)
+		statefulset.PUT("/update", s.UpdateStatefulSet)
+		statefulset.PUT("/replicas", s.UpdateStatefulSetReplicas)
+		statefulset.PUT("/restart", s.RestartStatefulSet)
+		statefulset.DELETE("/delete", s.DeleteStatefulSet)
+		statefulset.POST("/create", s.CreateStatefulSet)
+	}
+}
+
+func (s *statefulset) GetStatefulSets(ctx *gin.Context) {
 	params := new(struct {
 		FilterName string `form:"filter_name" json:"filter_name"`
 		Namespace  string `form:"namespace" json:"namespace"`
@@ -54,7 +67,7 @@ func (d *statefulset) GetStatefulSets(ctx *gin.Context) {
 	})
 }
 
-func (d *statefulset) GetStatefulSetDetail(ctx *gin.Context) {
+func (s *statefulset) GetStatefulSetDetail(ctx *gin.Context) {
 	params := new(struct {
 		StatefulSetName string `form:"statefulset_name" json:"statefulset_name"`
 		Namespace       string `form:"namespace" json:"namespace"`
@@ -93,7 +106,7 @@ func (d *statefulset) GetStatefulSetDetail(ctx *gin.Context) {
 	})
 }
 
-func (d *statefulset) UpdateStatefulSet(ctx *gin.Context) {
+func (s *statefulset) UpdateStatefulSet(ctx *gin.Context) {
 	params := new(struct {
 		Namespace string `json:"namespace"`
 		Content   string `json:"content"`
@@ -131,7 +144,7 @@ func (d *statefulset) UpdateStatefulSet(ctx *gin.Context) {
 	})
 }
 
-func (d *statefulset) UpdateStatefulSetReplicas(ctx *gin.Context) {
+func (s *statefulset) UpdateStatefulSetReplicas(ctx *gin.Context) {
 	params := new(struct {
 		StatefulSetName string `json:"statefulset_name"`
 		Namespace       string `json:"namespace"`
@@ -171,7 +184,7 @@ func (d *statefulset) UpdateStatefulSetReplicas(ctx *gin.Context) {
 	})
 }
 
-func (d *statefulset) RestartStatefulSet(ctx *gin.Context) {
+func (s *statefulset) RestartStatefulSet(ctx *gin.Context) {
 	params := new(struct {
 		StatefulSetName string `json:"statefulset_name"`
 		Namespace       string `json:"namespace"`

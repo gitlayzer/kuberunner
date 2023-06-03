@@ -11,6 +11,17 @@ var Service service
 
 type service struct{}
 
+func (s *service) Register(router *gin.Engine) {
+	service := router.Group("/api/v1/k8s/service")
+	{
+		service.GET("/list", s.GetServices)
+		service.GET("/detail", s.GetServiceDetail)
+		service.PUT("/update", s.UpdateService)
+		service.DELETE("/delete", s.DeleteService)
+		service.POST("/create", s.CreateService)
+	}
+}
+
 func (s *service) GetServices(ctx *gin.Context) {
 	params := new(struct {
 		FilterName string `form:"filter_name" json:"filter_name"`

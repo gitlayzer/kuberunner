@@ -11,6 +11,20 @@ var Deployment deployment
 
 type deployment struct{}
 
+func (d *deployment) Register(router *gin.Engine) {
+	deployment := router.Group("/api/v1/k8s/deployment")
+	{
+		deployment.GET("/list", d.GetDeployments)
+		deployment.GET("/detail", d.GetDeploymentDetail)
+		deployment.PUT("/replicas", d.UpdateDeploymentReplicas)
+		deployment.PUT("/update", d.UpdateDeployment)
+		deployment.PUT("/restart", d.RestartDeployment)
+		deployment.POST("/create", d.CreateDeployment)
+		deployment.DELETE("/delete", d.DeleteDeployment)
+
+	}
+}
+
 func (d *deployment) GetDeployments(ctx *gin.Context) {
 	params := new(struct {
 		FilterName string `form:"filter_name" json:"filter_name"`

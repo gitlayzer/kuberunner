@@ -11,6 +11,17 @@ var ConfigMap configmap
 
 type configmap struct{}
 
+func (cm *configmap) Register(router *gin.Engine) {
+	configmap := router.Group("/api/v1/k8s/configmap")
+	{
+		configmap.GET("/list", cm.GetConfigMaps)
+		configmap.GET("/detail", cm.GetConfigMapDetail)
+		configmap.POST("/update", cm.UpdateConfigMap)
+		configmap.POST("/create", cm.CreateConfigMap)
+		configmap.POST("/delete", cm.DeleteConfigMap)
+	}
+}
+
 func (cm *configmap) GetConfigMaps(ctx *gin.Context) {
 	params := new(struct {
 		FilterName string `form:"filter_name" json:"filter_name"`

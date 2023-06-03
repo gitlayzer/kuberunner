@@ -10,6 +10,10 @@ var Login login
 
 type login struct{}
 
+func (l *login) Register(router *gin.Engine) {
+	router.POST("login", l.AuthLogin)
+}
+
 func (l *login) AuthLogin(ctx *gin.Context) {
 	params := new(struct {
 		Username string `json:"username" form:"username"`

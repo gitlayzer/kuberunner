@@ -11,6 +11,17 @@ var Ingress ingress
 
 type ingress struct{}
 
+func (i *ingress) Register(router *gin.Engine) {
+	ingress := router.Group("/api/v1/k8s/ingress")
+	{
+		ingress.GET("/list", i.GetIngresses)
+		ingress.GET("/detail", i.GetIngressDetail)
+		ingress.PUT("/update", i.UpdateIngress)
+		ingress.DELETE("/delete", i.DeleteIngress)
+		ingress.POST("/create", i.CreateIngress)
+	}
+}
+
 func (i *ingress) GetIngresses(ctx *gin.Context) {
 	params := new(struct {
 		FilterName string `form:"filter_name" json:"filter_name"`

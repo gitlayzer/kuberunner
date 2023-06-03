@@ -11,6 +11,14 @@ var StorageClass storageClass
 
 type storageClass struct{}
 
+func (s *storageClass) Register(router *gin.Engine) {
+	storageClass := router.Group("/api/v1/k8s/storageclass")
+	{
+		storageClass.GET("/list", s.GetStorageClasses)
+		storageClass.GET("/detail", s.GetStorageClassDetail)
+	}
+}
+
 func (s *storageClass) GetStorageClasses(ctx *gin.Context) {
 	params := new(struct {
 		FilterName string `form:"filter_name" json:"filter_name"`

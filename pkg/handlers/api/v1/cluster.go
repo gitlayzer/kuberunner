@@ -10,6 +10,13 @@ var Cluster cluster
 
 type cluster struct{}
 
+func (c *cluster) Register(router *gin.Engine) {
+	cluster := router.Group("/api/v1/k8s/cluster")
+	{
+		cluster.GET("/list", c.GetClusterList)
+	}
+}
+
 func (c *cluster) GetClusterList(ctx *gin.Context) {
 	Clusters := make([]string, 0)
 

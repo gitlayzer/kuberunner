@@ -11,12 +11,17 @@ var DaemonSet daemonSet
 
 type daemonSet struct{}
 
-// @Summary 获取用户列表
-// @Description 获取用户列表
-// @Tags Users
-// @Produce json
-// @Success 200 {object} Response
-// @Router /api/v1/k8s/daemonset [get]
+func (d *daemonSet) Register(router *gin.Engine) {
+	daemonSet := router.Group("/api/v1/k8s/daemonset")
+	{
+		daemonSet.GET("/list", d.GetDaemonSets)
+		daemonSet.GET("/detail", d.GetDaemonSetDetail)
+		daemonSet.POST("/update", d.UpdateDaemonSet)
+		daemonSet.POST("/restart", d.RestartDaemonSet)
+		daemonSet.POST("/delete", d.DeleteDaemonSet)
+		daemonSet.POST("/create", d.CreateDaemonSet)
+	}
+}
 
 func (d *daemonSet) GetDaemonSets(ctx *gin.Context) {
 	params := new(struct {

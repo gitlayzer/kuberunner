@@ -11,6 +11,13 @@ var Node node
 
 type node struct{}
 
+func (n *node) Register(router *gin.Engine) {
+	node := router.Group("/api/v1/k8s/node")
+	{
+		node.GET("/list", n.GetNodes)
+	}
+}
+
 func (n *node) GetNodes(ctx *gin.Context) {
 	params := new(struct {
 		FilterName string `form:"filter_name" json:"filter_name"`

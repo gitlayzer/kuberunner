@@ -11,6 +11,18 @@ var Pod pod
 
 type pod struct{}
 
+func (p *pod) Register(router *gin.Engine) {
+	pod := router.Group("/api/v1/k8s/pod")
+	{
+		pod.GET("/list", p.GetPodList)
+		pod.GET("/detail", p.GetPodDetail)
+		pod.GET("/log", p.GetPodLog)
+		pod.GET("/container", p.GetPodContainer)
+		pod.PUT("/update", p.UpdatePod)
+		pod.DELETE("/delete", p.DeletePod)
+	}
+}
+
 func (p *pod) GetPodList(ctx *gin.Context) {
 	params := new(struct {
 		FilterName string `form:"filter_name" json:"filter_name"`

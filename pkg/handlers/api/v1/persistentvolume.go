@@ -11,6 +11,17 @@ var PersistentVolume persistentvolume
 
 type persistentvolume struct{}
 
+func (p *persistentvolume) Register(router *gin.Engine) {
+	persistentvolume := router.Group("/api/v1/k8s/persistentvolume")
+	{
+		persistentvolume.GET("/list", p.GetPersistentVolumes)
+		persistentvolume.GET("/detail", p.GetPersistentVolumeDetail)
+		persistentvolume.POST("/create", p.CreatePersistentVolume)
+		persistentvolume.DELETE("/delete", p.DeletePersistentVolume)
+		persistentvolume.PUT("/update", p.UpdatePersistentVolume)
+	}
+}
+
 func (p *persistentvolume) GetPersistentVolumes(ctx *gin.Context) {
 	params := new(struct {
 		FilterName string `form:"filter_name" json:"filter_name"`
