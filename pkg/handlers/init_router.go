@@ -8,7 +8,6 @@ import (
 	"github.com/gitlayzer/kuberunner/pkg/middlewares/cors"
 	"github.com/gitlayzer/kuberunner/pkg/types/terminal"
 	"github.com/gitlayzer/kuberunner/pkg/utils"
-	"net/http"
 )
 
 func init() {
@@ -39,27 +38,11 @@ func InitRouter() {
 	v1.StorageClass.Register(r)
 
 	utils.Logo()
+	r.GET("/ws", terminal.Terminal.ServeWsTerminal)
 
-	wsHandler := http.NewServeMux()
-	wsHandler.HandleFunc("/ws", terminal.Terminal.WsHandler)
-	ws := &http.Server{
-		Addr:    config.GetWsListenAddress(),
-		Handler: wsHandler,
+	err := r.Run(config.GetListenAddress())
+	if err != nil {
+		return
 	}
 
-	go func() {
-		err := ws.ListenAndServe()
-		if err != nil {
-			return
-		}
-	}()
-
-	go func() {
-		err := r.Run(config.GetListenAddress())
-		if err != nil {
-			return
-		}
-	}()
-
-	select {}
 }

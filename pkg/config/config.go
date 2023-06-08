@@ -2,15 +2,15 @@ package config
 
 import (
 	"fmt"
+
 	"github.com/spf13/viper"
 )
 
 var (
-	KubeConfigs     map[string]string
-	ListenAddress   string
-	WsListenAddress string
-	Username        string
-	Password        string
+	KubeConfigs   map[string]string
+	ListenAddress string
+	Username      string
+	Password      string
 )
 
 func init() {
@@ -27,9 +27,6 @@ func init() {
 	if err := viper.UnmarshalKey("ListenAddress", &ListenAddress); err != nil {
 		panic(fmt.Errorf("failed to unmarshal ListenAddress: %s", err))
 	}
-	if err := viper.UnmarshalKey("WsListenAddress", &WsListenAddress); err != nil {
-		panic(fmt.Errorf("failed to unmarshal WsAddress: %s", err))
-	}
 	if err := viper.UnmarshalKey("Username", &Username); err != nil {
 		panic(fmt.Errorf("failed to unmarshal Username: %s", err))
 	}
@@ -44,10 +41,6 @@ func GetKubeConfig() map[string]string {
 
 func GetListenAddress() string {
 	return ListenAddress
-}
-
-func GetWsListenAddress() string {
-	return WsListenAddress
 }
 
 func GetUsername() string {

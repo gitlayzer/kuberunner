@@ -1,17 +1,20 @@
 package terminal
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/http"
+	"time"
+
+	"github.com/gin-gonic/gin"
 	"github.com/gitlayzer/kuberunner/pkg/utils"
 	"github.com/gorilla/websocket"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/client-go/tools/remotecommand"
-	"net/http"
-	"time"
 )
 
 var Terminal terminal
@@ -84,23 +87,20 @@ func (t *TerminalSession) Close() error {
 	return t.WsConn.Close()
 }
 
-func (t *terminal) WsHandler(w http.ResponseWriter, r *http.Request) {
-	if err := r.ParseForm(); err != nil {
-		return
-	}
+type WebShellOptions struct {
+	Namespace     string `form:"namespace"`
+	PodName       string `form:"pod_name"`
+	ContainerName string `form:"container_name"`
+	Cluster       string `form:"cluster"`
+}
 
-	namespace := r.Form.Get("namespace")
-	podName := r.Form.Get("pod_name")
-	containerName := r.Form.Get("container_name")
-	cluster := r.Form.Get("cluster")
-	fmt.Printf("exec pod: %s, container: %s, namespace: %s, cluster: %s", podName, containerName, namespace, cluster)
-
-	client, err := utils.K8s.GetClient(cluster)
+func (t *terminal) WebShellHandler(webShellOptions *WebShellOptions, w http.ResponseWriter, r *http.Request) {
+	client, err := utils.K8s.GetClient(webShellOptions.Cluster)
 	if err != nil {
 		return
 	}
 
-	conf, err := clientcmd.BuildConfigFromFlags("", utils.K8s.KubeConfMap[cluster])
+	conf, err := clientcmd.BuildConfigFromFlags("", utils.K8s.KubeConfMap[webShellOptions.Cluster])
 	if err != nil {
 		return
 	}
@@ -119,11 +119,11 @@ func (t *terminal) WsHandler(w http.ResponseWriter, r *http.Request) {
 
 	req := client.CoreV1().RESTClient().Post().
 		Resource("pods").
-		Name(podName).
-		Namespace(namespace).
+		Name(webShellOptions.PodName).
+		Namespace(webShellOptions.Namespace).
 		SubResource("exec").
 		VersionedParams(&corev1.PodExecOptions{
-			Container: containerName,
+			Container: webShellOptions.ContainerName,
 			Command:   []string{"/bin/sh"},
 			Stdin:     true,
 			Stdout:    true,
@@ -135,8 +135,8 @@ func (t *terminal) WsHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
-
-	if err = exec.Stream(remotecommand.StreamOptions{
+	ctx := context.Background()
+	if err = exec.StreamWithContext(ctx, remotecommand.StreamOptions{
 		Stdin:             pty,
 		Stdout:            pty,
 		Stderr:            pty,
@@ -147,6 +147,17 @@ func (t *terminal) WsHandler(w http.ResponseWriter, r *http.Request) {
 		pty.Done()
 	}
 
+}
+
+func (t *terminal) ServeWsTerminal(c *gin.Context) {
+	var webShellOptions WebShellOptions
+	if err := c.ShouldBindQuery(&webShellOptions); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": err.Error(),
+		})
+		return
+	}
+	t.WebShellHandler(&webShellOptions, c.Writer, c.Request)
 }
 
 func NewTerminalSession(w http.ResponseWriter, r *http.Request, responseHeader http.Header) (*TerminalSession, error) {
